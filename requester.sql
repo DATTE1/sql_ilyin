@@ -70,3 +70,11 @@ join contract ct on c.client_id = ct.client_id
 join tariff t on ct.tariff_id = t.tariff_id
 where t.tariff_price = (select MAX(tariff_price) from tariff)
 order by c.name;
+
+--11) Оконная функция: ранжирование тарифов по количеству подключенных клиентов
+SELECT t.tariff_name, COUNT(ct.client_id) AS client_count,
+       RANK() OVER (ORDER BY COUNT(ct.client_id) DESC) AS rank
+FROM tariff t
+LEFT JOIN contract ct ON t.tariff_id = ct.tariff_id
+GROUP BY t.tariff_name
+ORDER BY client_count DESC;
