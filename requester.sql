@@ -52,3 +52,21 @@ LEFT JOIN contract ct ON t.tariff_id = ct.tariff_id
 LEFT JOIN client c ON ct.client_id = c.client_id
 GROUP BY t.tariff_name
 ORDER BY client_count desc;
+
+--8) Тарифы по убыванию цены
+select tariff_name, tariff_price
+from tariff
+order by tariff_price desc;
+
+--9) Количество клиентов без услуг выдачи роутера
+select COUNT(*) as clients_without_router
+from client
+where router_id is NULL;
+
+--10) Клиенты с самым дорогим на данный момент тарифом
+select c.name, c.phone, t.tariff_name, t.tariff_price
+from client c
+join contract ct on c.client_id = ct.client_id
+join tariff t on ct.tariff_id = t.tariff_id
+where t.tariff_price = (select MAX(tariff_price) from tariff)
+order by c.name;
